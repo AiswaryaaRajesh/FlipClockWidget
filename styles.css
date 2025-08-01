@@ -1,0 +1,753 @@
+/* BASIC STYLES */
+body {
+  margin: 0;
+  padding-bottom: 60px; 
+}
+
+.container-clock {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flip-clock {
+  font-family: 'Orbitron';
+  font-weight: 700;
+}
+
+.header, .footer, .date, .overlay-content{
+  font-family: 'Roboto';
+}
+
+/*small screen 
+@media screen and (max-width: 992px)*/
+@media screen and (max-width: 576px){
+  .container-clock{
+    margin-top: -2.5rem;
+  }
+  
+  .flip-card {
+    width: 4rem;
+    height: 10rem;
+    border-radius: 8px;
+  }
+  
+  .flip-card .bottom,
+  .flip-card .flip-bt,
+  .flip-card .flip-top,
+  .flip-card .flip-bottom {
+    font-size: 3rem;
+  }
+
+  .separator {
+    font-size: 3rem;
+    padding-top: 4rem;
+  }
+
+  .seconds-display {
+    font-size: 1.5rem;
+    width: 2rem;
+  }
+ 
+  .overlay{
+    padding: 0.5rem 0.7rem 0.5rem 0rem;
+  }
+
+  .overlay-content {
+    font-size: 0.8rem;
+  }
+
+  .slider{
+    width: 2.5rem;
+    height: 1.3rem;
+  }
+
+  .slider::before{
+    height: 1.1rem;
+    width: 1.1rem;
+    left: 0.1rem;
+    bottom: 0.1rem;
+  }
+
+  .control-icons{
+    margin: 0.5rem 0 !important;
+  }
+
+  .fullscreen-icon,
+  .settings-icon{
+    font-size: 1rem;
+  }
+
+  .p-footer{
+    font-size: 0.8rem;
+  }
+
+  .overlay-settings{
+    top: 3rem;
+    right: 13vw;
+  }
+
+  .date {
+  font-size: 1rem;
+  }
+
+  .download-scr a{
+    font-size: 0.7rem;
+  }
+
+  #exit-hint{
+    font-size: 0.8rem;
+    top: 6.5rem;
+  }
+}
+
+/*Medium Screen
+@media only screen and (min-width: 600px)*/ 
+@media screen and (min-width: 577px) and (max-width: 1023px){
+  .container-clock{
+    margin-top: -5rem;
+  }
+  
+  .flip-card {
+    width: 10rem;
+    height: 20rem;
+    border-radius: 15px;
+  }
+
+  .flip-card .bottom,
+  .flip-card .flip-bt,
+  .flip-card .flip-top,
+  .flip-card .flip-bottom {
+    font-size: 5.2rem;
+  }
+
+  .separator {
+    font-size: 5rem;
+    padding-top: 9rem;
+  }
+
+  .seconds-display {
+    font-size: 2rem;
+    width: 2rem;
+  }
+
+  .overlay{
+    padding: 0.7rem 0.7rem 0.7rem 0rem;
+  }
+ 
+  .overlay-content {
+    font-size: 1rem;
+  }
+
+  .slider{
+    width: 2.7rem;
+    height: 1.5rem;
+  }
+
+  .slider::before{
+    height: 1.3rem;
+    width: 1.3rem;
+    left: 0.1rem;
+    bottom: 0.1rem;
+  }
+
+  .control-icons{
+    margin: 1rem 0 !important;
+  }
+
+  .fullscreen-icon,
+  .settings-icon{
+    font-size: 1.5rem;
+  }
+
+  .p-footer{
+    font-size: 1rem;
+  }
+
+  .overlay-settings{
+    top: 4.5rem;
+    right: 16.8vw;
+  }
+
+  .date {
+    font-size: 1.8rem;
+  }
+
+  .download-scr a{
+    font-size: 1rem;
+  }
+
+  #exit-hint{
+    font-size: 1rem;
+    top: 8rem;
+  }
+
+}
+
+/* width: 1024 */
+@media screen and (width: 1024px){
+  .container-clock{
+    margin-top: -6rem;
+  }
+
+  .flip-card {
+    width: 12.5rem;
+    height: 27rem;
+    border-radius: 15px;
+  }
+
+  .flip-card .bottom,
+  .flip-card .flip-bt,
+  .flip-card .flip-top,
+  .flip-card .flip-bottom {
+    font-size: 8rem;
+  }
+
+  .separator {
+    font-size: 6rem;
+    padding-top: 12rem;
+  }
+
+  .seconds-display {
+    font-size: 3rem;
+    width: 3rem;
+  }
+ 
+  .overlay{
+    padding: 1rem 1rem 1rem 0.2rem;
+  }
+
+  .overlay-content {
+    font-size: 1.5rem;
+  }
+
+  .slider{
+    width: 3rem;
+    height: 1.8rem;
+  }
+
+  .slider::before{
+    height: 1.5rem;
+    width: 1.5rem;
+    left: 0.15rem;
+    bottom: 0.15rem;
+  }
+
+  .control-icons{
+    margin: 1.5rem 0 !important;
+  }
+
+  .fullscreen-icon,
+  .settings-icon {
+    font-size: 2rem;
+  }
+
+  .p-footer{
+    font-size: 1.5rem;
+  }
+
+  .overlay-settings{
+    top: 6.2rem;
+    right: 12vw;
+  }
+
+  .date {
+  font-size: 2.5rem;
+  }
+
+  #exit-hint{
+    font-size: 1.2rem;
+    top: 10rem;
+  }
+}
+
+/*large screen */
+@media screen and (min-width: 1025px) {
+  .container-clock{
+    margin-top: -7rem;
+  }
+
+  .flip-card {
+    width: 16rem;
+    height: 31rem;
+    border-radius: 15px;
+  }
+
+  .flip-card .bottom,
+  .flip-card .flip-bt,
+  .flip-card .flip-top,
+  .flip-card .flip-bottom {
+    font-size: 10rem;
+  }
+
+  .separator {
+    font-size: 6rem;
+    padding-top: 15rem;
+  }
+  
+  .seconds-display {
+    font-size: 3rem;
+    width: 3rem;
+  }
+
+  .overlay{
+    padding: 1rem 1rem 1rem 0.2rem;
+  }
+ 
+  .overlay-content {
+    font-size: 1rem;
+  }
+
+  .slider{
+    width: 3rem;
+    height: 1.8rem;
+  }
+
+  .slider::before{
+    height: 1.5rem;
+    width: 1.5rem;
+    left: 0.15rem;
+    bottom: 0.15rem;
+  }
+
+  .control-icons{
+    margin: 1rem 0 !important;
+  }
+
+  .fullscreen-icon,
+  .settings-icon{
+    font-size: 1.5rem;
+  }
+
+  .p-footer{
+    font-size: 1rem;
+  }
+
+  .overlay-settings{
+    top: 3.5rem;
+    right: 13.5vw;
+  }
+
+  .date {
+  font-size: 2.5rem;
+  }
+
+  #exit-hint{
+    font-size: 1.2rem;
+    top: 8rem;
+  }
+
+}
+
+.separator {
+  font-weight: bold;
+  line-height: 90px;
+}
+
+/* FLIP CARD STYLES */
+.flip-card {
+  position: relative;
+  font-weight: bold;
+  perspective: 1000px;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* COMMON STYLES FOR FLIPPING ELEMENTS */
+.flip-card .bottom,
+.flip-card .flip-bt,
+.flip-card .flip-top,
+.flip-card .flip-bottom {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  line-height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backface-visibility: hidden;
+  font-weight: bold;
+}
+
+/* STATIC BOTTOM (always visible) */
+.flip-card .bottom {
+  bottom: 0;
+  transform: rotateX(0deg);
+  z-index: 1;
+}
+
+/* BOTTOM TO TOP (FIRST FLIP) */
+.flip-card .flip-bt {
+  top: 0;
+  transform-origin: bottom;
+  transform: rotateX(90deg);
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* TOP TO BACK (SECOND FLIP) */
+.flip-card .flip-top {
+  top: 0;
+  transform-origin: bottom;
+  transform: rotateX(0deg);
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* BOTTOM FROM BACK (FINAL FLIP) */
+.flip-card .flip-bottom {
+  bottom: 0;
+  transform-origin: top;
+  transform: rotateX(90deg);
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* SHOW FLIPPING ELEMENTS DURING ANIMATION */
+.flip-card.flipping .flip-bt,
+.flip-card.flipping .flip-top,
+.flip-card.flipping .flip-bottom {
+  opacity: 1;
+  pointer-events: auto;
+  display: flex;
+}
+
+/* ANIMATION ASSIGNMENTS */
+.flip-card.flipping .flip-bt {
+  animation: flipBT 0.2s forwards;
+}
+
+.flip-card.flipping .flip-top {
+  animation: flipTop 0.3s 0.2s forwards;
+}
+
+.flip-card.flipping .flip-bottom {
+  animation: flipBottom 0.5s 0.4s forwards;
+}
+
+/* KEYFRAMES */
+@keyframes flipBT {
+  0% {
+    transform: rotateX(90deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flipTop {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes flipBottom {
+  0% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+/* ------------------------------------ DIGIT BASED SECONDS WORKING ----------------------------------- */
+.seconds-display {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* ---------------------- TOGGLE SWITCH SLIDER ---------------------------------- */
+/* Theme toggle container as flex */
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Hide the checkbox */
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Slider switch styling */
+.slider {
+  position: relative;
+  display: inline-block;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: 0.4s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #1e7c7d;
+}
+
+input:checked + .slider::before {
+  transform: translateX(1.2rem);
+}
+
+/* -------------------------- THEME SPECIFIC ----------------------------*/
+
+/* Dark Theme (default) */
+body.dark-theme {
+  background-color: #0b0b0b;
+}
+
+body.dark-theme .control-icons,
+body.dark-theme footer{
+  color: #919090;
+}
+
+body.dark-theme .header {
+  background-color: #0b0b0b;
+  border-bottom: #919090 2px solid;
+}
+
+body.dark-theme .flip-card .bottom,
+body.dark-theme .flip-card .flip-bt,
+body.dark-theme .flip-card .flip-top,
+body.dark-theme .flip-card .flip-bottom
+{
+  color: #ffffff;
+  background: #414141;
+}
+
+body.dark-theme .separator{
+  color: #ffffff;
+}
+
+body.dark-theme .seconds-display,
+body.dark-theme .date{
+  color: #dedede;
+}
+
+body.dark-theme .overlay {
+  background-color: #fdfdfd;
+  color: #141414;
+}
+
+body.dark-theme #exit-hint {
+  color: #aaa;
+  border: 2px #aaa solid;
+  background-color: #0b0b0b;
+}
+
+/* ---------- Light Theme -------------- */
+body.light-theme {
+  background-color: #dafff5;
+}
+
+body.light-theme .control-icons,
+body.light-theme footer{
+  color: #013637;
+}
+
+body.light-theme .header {
+  background-color: #dafff5;
+  border-bottom: #013637 2px solid;
+}
+
+body.light-theme .flip-card .bottom,
+body.light-theme .flip-card .flip-bt,
+body.light-theme .flip-card .flip-top,
+body.light-theme .flip-card .flip-bottom 
+{
+  color: #013637;
+  background: #339e9f;
+}
+
+body.light-theme .separator,
+body.light-theme .seconds-display,
+body.light-theme .date {
+  color: #013637;
+}
+
+body.light-theme .overlay {
+  background-color: #013637;
+  color: #ffffff;
+}
+
+
+body.light-theme #exit-hint {
+  color: #013637;
+  border: 2px #013637 solid;
+  background-color: #dafff5;
+}
+
+/* ------------------------------- DATE ------------------------------ */
+
+.date{
+  letter-spacing: 12px;
+}
+
+/* ------------------------------- HEADER ---------------------------- */
+
+/* Header base style */
+.header {
+  z-index: 1000;
+}
+
+/* Hide header container by default */
+#header-control-icons {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* Show when user is active or overlay is open */
+body.user-active #header-control-icons,
+body.overlay-open #header-control-icons {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Control icons style */
+.control-icons {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Show icons when user active or overlay open */
+body.user-active .control-icons,
+body.overlay-open .control-icons {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+/* ------------------FULLSCREEN --------------------------- */
+.fullscreen-icon,
+.settings-icon{
+  cursor: pointer;
+}
+
+
+/* ---------------------- OVERLAY -------------------------- */
+.overlay {
+  position: fixed;
+  border-radius: 10px;
+  z-index: 1100;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: opacity 0.3s ease;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* -----------------------FOOTER----------------------------------- */
+
+.hide-footer footer {
+  display: none !important;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.copyright {
+  width: 1rem;
+}
+
+
+/* ------------------ Exit hint ----------------- */
+#exit-hint {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  z-index: 4000;
+  font-family: 'Roboto', sans-serif;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.5s ease-in-out;
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  text-align: center;
+
+}
+
+#exit-hint.show {
+  opacity: 0.8;
+}
+
+/* -------------- How to use Dialog Box ---------------- */
+.pwa-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+  background-color: rgba(0, 0, 0, 0.4); /* semi-transparent black */
+  backdrop-filter: blur(4px); /* ⬅️ This adds the blur */
+  -webkit-backdrop-filter: blur(8px); /* Safari support */
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+
+.pwa-dialog-content {
+  background-color: #fff;
+  color: #111;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  position: relative;
+  
+}
+
+.pwa-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.pwa-dialog-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.pwa-dialog .close-dialog {
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.hidden {
+  display: none !important;
+}
