@@ -267,14 +267,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 5000);
 });
 
-// Serviceworker -------------------------------------------------------------------
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js')
-    .then(reg => console.log("✅ Service Worker registered"))
-    .catch(err => console.warn("❌ Service Worker failed", err));
-}
 
-// How to use Dialog Box ------------------------------------------------------------------------------
+// Show Dialog Box for PWA Install ---------------------
 document.addEventListener("DOMContentLoaded", () => {
   const dialog = document.getElementById("pwa-guide-dialog");
   const dialogBody = document.getElementById("pwa-guide-instructions");
@@ -303,6 +297,12 @@ document.addEventListener("DOMContentLoaded", () => {
           <li>Select <strong>"Add to Home Screen"</strong>.</li>
           <li>Open it from your Home Screen like a native app.</li>
         </ol>
+        <hr />
+        <p>To prevent your screen from turning off:</p>
+        <ol>
+          <li>Go to <strong>Settings → Display & Brightness → Auto-Lock</strong>.</li>
+          <li>Set it to <strong>Never</strong>.</li>
+        </ol>
       `;
     } else if (ua.includes("mac") || ua.includes("windows")) {
       content = `
@@ -318,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
       content = `
         <p>This Flip Clock can be installed as a PWA on most modern browsers:</p>
         <ol>
-          <li>Look for the <strong>Install App</strong> icon in the browser's address bar or menu.</li>
+          <li>Look for the <strong>Install App</strong> icon in the browser's address bar or menu (⋮ or ...).</li>
           <li>Add it to your home screen or desktop for fullscreen use.</li>
         </ol>
       `;
@@ -327,8 +327,89 @@ document.addEventListener("DOMContentLoaded", () => {
     dialogBody.innerHTML = content;
     dialog.classList.remove("hidden");
 
-    closeBtn.addEventListener("click", () => {
+    closeBtn?.addEventListener("click", () => {
       dialog.classList.add("hidden");
+    });
+  }
+
+  // Keep Screen Awake in PWA mode -------------------------------
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('✅ Wake Lock activated');
+
+        document.addEventListener('visibilitychange', async () => {
+          if (wakeLock !== null && document.visibilityState === 'visible') {
+            try {
+              wakeLock = await navigator.wakeLock.request('screen');
+              console.log('🔄 Wake Lock re-acquired');
+            } catch (err) {
+              console.error('⚠️ Failed to re-acquire Wake Lock:', err);
+            }
+          }
+        });
+      } else {
+        console.warn('❌ Wake Lock API not supported on this device.');
+      }
+    } catch (err) {
+      console.error('❌ Wake Lock request failed:', err);
+    }
+  }
+
+  if (isPWA) {
+    requestWakeLock();
+  }
+
+  // Service Worker + Auto Update Check -----------------------------------------
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js').then(registration => {
+      console.log('✅ Service Worker registered');
+
+      // Check for updates when app/tab becomes visible
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          registration.update();
+        }
+      });
+
+      registration.onupdatefound = () => {
+        const newWorker = registration.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            const banner = document.getElementById('update-banner');
+            const refreshBtn = document.getElementById('refresh-btn');
+
+            if (banner && refreshBtn) {
+              banner.classList.remove('hidden');
+
+              refreshBtn.addEventListener('click', () => {
+                newWorker.postMessage({ action: 'skipWaiting' });
+                window.location.reload();
+              });
+
+              // Auto-hide after 10s if not clicked
+              setTimeout(() => {
+                banner.classList.add('hidden');
+              }, 10000);
+            }
+          }
+        };
+      };
+
+      // Reload when SW takes control
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          window.location.reload();
+          refreshing = true;
+        }
+      });
+
+    }).catch(err => {
+      console.error('❌ Service Worker registration failed:', err);
     });
   }
 });
