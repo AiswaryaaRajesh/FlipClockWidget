@@ -1,7 +1,7 @@
 {
   "id": "/FlipClockWidget/index.html",
   "name": "Flip Clock",
-  "short_name": "Clock",
+  "short_name": "Flip Clock",
   "description": "A stylish animated flip clock",
   "start_url": "/FlipClockWidget/",
   "scope": "/FlipClockWidget/",
