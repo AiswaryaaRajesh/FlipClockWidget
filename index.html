@@ -44,6 +44,18 @@
       </div>
     </div>
 
+    <!-- Screen Lock Guide Dialog (shown only inside PWA) -->
+    <div id="screen-lock-dialog" class="pwa-dialog hidden">
+      <div class="pwa-dialog-content">
+        <div class="pwa-dialog-header">
+          <h5>Prevent Screen from Turning Off</h5>
+          <i class="fa-solid fa-circle-xmark close-dialog" title="Close"></i>
+        </div>
+        <div class="pwa-dialog-body" id="screen-lock-instructions"></div>
+      </div>
+    </div>
+
+
     <div id="update-banner" class="status-banner hidden">
         <span>A new version is available</span>
         <button id="refresh-btn"><i class="fa-solid fa-arrows-rotate"></i></button>
@@ -96,6 +108,3 @@
 
   </body>
 </html>
-
-<!--  llive server: -->
-<!-- python -m http.server 8000 -->
