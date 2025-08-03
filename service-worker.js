@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flip-clock-cache-v2'; // Increment v to force-update
+const CACHE_NAME = 'flip-clock-cache-v2.1';
 
 const urlsToCache = [
   './',
@@ -10,52 +10,49 @@ const urlsToCache = [
   './icon512x512.png',
   './screenshot-mobile.png',
   './screenshot-desktop.png',
+  'https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap',
+  'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js'
 ];
 
-// Install — cache app shell
+// Install: Cache core assets
 self.addEventListener('install', event => {
-  self.skipWaiting(); // Activate new service worker immediately
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Activate — clean up old caches
+// Activate: Clean old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
+        keys.map(key => key !== CACHE_NAME && caches.delete(key))
       )
     )
   );
-  return self.clients.claim(); // Become active SW for all clients immediately
+  return self.clients.claim();
 });
 
-// Fetch — serve from cache first, then update in background
+// Fetch: Serve from cache first, then update
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
+    caches.match(event.request).then(cached => {
       const fetchAndUpdate = fetch(event.request)
-        .then(networkResponse => {
+        .then(response => {
           if (event.request.url.startsWith(self.location.origin)) {
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, networkResponse.clone());
-            });
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
           }
-          return networkResponse;
+          return response;
         })
-        .catch(() => cachedResponse); // fallback to cache if offline
+        .catch(() => cached); // fallback to cache
 
-      return cachedResponse || fetchAndUpdate;
+      return cached || fetchAndUpdate;
     })
   );
 });
