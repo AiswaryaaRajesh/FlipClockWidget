@@ -23,18 +23,14 @@
 
     <header id="header-control-icons">
       <div class="header header-sticky fixed-top">
-        <div class="container">
-          <div class="row">
-            <div id="control-icons-toggle" class="control-icons d-flex align-items-center justify-content-between">
-              <div class="offset-7 col-5 d-flex align-items-center justify-content-end">
-                <i class="fa-solid fa-gear settings-icon m-1 col-2 text-end" title="Settings"></i>
-                <i id="fullscreen-toggle" class="col-2 fa-solid fa-expand fullscreen-icon m-1 text-end" title="Toggle Fullscreen"></i>
-              </div>
-            </div>
+        <div id="control-icons-toggle" class="control-icons d-flex align-items-center justify-content-between">
+          <div class="offset-7 col-5 d-flex align-items-center justify-content-end">
+            <i class="fa-solid fa-gear settings-icon m-1 col-2 text-end" title="Settings"></i>
+            <i id="fullscreen-toggle" class="col-2 fa-solid fa-expand fullscreen-icon m-1 me-4 text-end" title="Toggle Fullscreen"></i>
           </div>
         </div>
       </div>
-    </header>    
+    </header> 
 
     <div id="exit-hint"></div>
 
@@ -47,6 +43,15 @@
         <div id="pwa-guide-instructions" class="pwa-dialog-body"></div>
       </div>
     </div>
+
+    <div id="update-banner" class="status-banner hidden">
+        <span>A new version is available</span>
+        <button id="refresh-btn"><i class="fa-solid fa-arrows-rotate"></i></button>
+    </div>
+    <div id="updated-banner" class="status-banner hidden">
+        <span>New version is now active</span>
+    </div>
+
 
 
     <!-- Settings Dropdown -->
@@ -61,8 +66,8 @@
     </div>
 
     <!-- CLOCK -->
-    <div class="container container-clock">
-      <div class="row d-flex flex-column align-items-center justify-content-center">
+    <div class="container-clock">
+      <div class="d-flex flex-column align-items-center justify-content-center">
         <div class="flip-clock d-flex align-items-center justify-content-center mx-2">
           
           <div class="flip-card hours-tens me-md-2 ms-md-1 mx-1" data-digit="0"></div>
@@ -91,3 +96,6 @@
 
   </body>
 </html>
+
+<!--  llive server: -->
+<!-- python -m http.server 8000 -->
