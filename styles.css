@@ -1,7 +1,6 @@
 /* BASIC STYLES */
 body {
   margin: 0;
-  padding-bottom: 60px; 
 }
 
 .container-clock {
@@ -100,6 +99,10 @@ body {
     font-size: 0.8rem;
     top: 6.5rem;
   }
+
+  .status-banner {
+    font-size: 0.7rem;
+  }
 }
 
 /*Medium Screen
@@ -183,6 +186,10 @@ body {
     top: 8rem;
   }
 
+  .status-banner {
+    font-size: 1rem;
+  }
+
 }
 
 /* width: 1024 */
@@ -260,6 +267,10 @@ body {
     font-size: 1.2rem;
     top: 10rem;
   }
+
+  .status-banner {
+    font-size: 1.1rem;
+  }
 }
 
 /*large screen */
@@ -336,6 +347,10 @@ body {
   #exit-hint{
     font-size: 1.2rem;
     top: 8rem;
+  }
+
+  #update-banner{
+    font-size: 1.1rem;
   }
 
 }
@@ -750,4 +765,56 @@ footer {
 
 .hidden {
   display: none !important;
+}
+
+/* ---------------- Shared Banner (Update(d)) Style ----------------- */
+
+.status-banner {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  color: #000000;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 5000;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.status-banner.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -150%);
+}
+
+.status-banner span {
+  font-weight: 500;
+  text-align: center;
+}
+
+.status-banner button {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 0.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.status-banner button:hover {
+  background: #e1e1e1;
+}
+
+.status-banner button i {
+  padding: 0.2rem;
 }
