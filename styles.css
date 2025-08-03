@@ -672,8 +672,22 @@ body.overlay-open .control-icons {
 
 /* -----------------------FOOTER----------------------------------- */
 
+/* Footer is hidden when body has .hide-footer (fullscreen mode) */
 .hide-footer footer {
-  display: none !important;
+  display: none;
+}
+
+/* Footer is hidden when .user-active is NOT present */
+body:not(.user-active):not(.hide-footer) footer {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* Footer is visible when user is active */
+body.user-active footer {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 footer {
