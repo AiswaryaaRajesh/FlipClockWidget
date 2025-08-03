@@ -82,38 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-
-// Fullscreen Toggle ------------------------------------------------------------------------------
-const fullscreenToggleIcon = document.getElementById("fullscreen-toggle");
-const footer = document.querySelector("footer");
-
-// Toggle fullscreen on icon click or double-click
-function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-}
-
-// Update UI when fullscreen state changes
-function updateFullscreenUI() {
-  const isFullscreen = !!document.fullscreenElement;
-
-  document.body.classList.toggle("hide-footer", isFullscreen);
-
-  fullscreenToggleIcon.classList.toggle("fa-expand", !isFullscreen);
-  fullscreenToggleIcon.classList.toggle("fa-compress", isFullscreen);
-}
-
-// Bind click and double-click
-fullscreenToggleIcon.addEventListener("click", toggleFullscreen);
-document.addEventListener("dblclick", toggleFullscreen);
-
-// Handle Esc or any fullscreen exit
-document.addEventListener("fullscreenchange", updateFullscreenUI);
-
-
 // Digit Based Seconds WORKING-----------------------------------------------------------------------
 function updateSecondsDigits() {
   const display = document.getElementById("secondsDisplay");
@@ -151,36 +119,59 @@ themeToggle.addEventListener("change", () => {
   }
 });
 
-// HEADER AND OVERLAYS-------------------------------------------------------------------------
+// FULLSCREEN TOGGLE --------------------------------------------------------
+const fullscreenToggleIcon = document.getElementById("fullscreen-toggle");
+const footer = document.querySelector("footer");
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function updateFullscreenUI() {
+  const isFullscreen = !!document.fullscreenElement;
+
+  // Footer should always be hidden in fullscreen
+  document.body.classList.toggle("hide-footer", isFullscreen);
+
+  fullscreenToggleIcon.classList.toggle("fa-expand", !isFullscreen);
+  fullscreenToggleIcon.classList.toggle("fa-compress", isFullscreen);
+}
+
+fullscreenToggleIcon.addEventListener("click", toggleFullscreen);
+document.addEventListener("dblclick", toggleFullscreen);
+document.addEventListener("fullscreenchange", () => {
+  updateFullscreenUI();
+  setUserActive(); // restart auto-hide with updated fullscreen state
+});
+
+// HEADER AND OVERLAYS -------------------------------------------------------
 const settingsIcon = document.querySelector('.settings-icon');
 const settingsDropdown = document.getElementById('settings-dropdown');
 
-// Utility to check if any overlay is open
 function isOverlayOpen() {
   return !settingsDropdown.classList.contains('hidden');
 }
 
-// Open the settings overlay and lock header
 function showOverlay() {
   closeOverlays();
   settingsDropdown.classList.remove('hidden');
   document.body.classList.add("overlay-open", "user-active");
-  clearTimeout(userActiveTimeout); // prevent auto-hide
+  clearTimeout(userActiveTimeout);
 }
 
-// Close overlay
 function closeOverlays() {
   settingsDropdown.classList.add('hidden');
   document.body.classList.remove("overlay-open");
 
-  // Restart the auto-hide timer for the header
   setTimeout(() => {
-    setUserActive();
-  }, 100); // slight delay ensures user sees header briefly after closing overlay
+    setUserActive(); // restart hide timer
+  }, 100);
 }
 
-
-// Toggle on settings icon click
 settingsIcon.addEventListener('click', (e) => {
   e.stopPropagation();
   if (settingsDropdown.classList.contains('hidden')) {
@@ -190,7 +181,6 @@ settingsIcon.addEventListener('click', (e) => {
   }
 });
 
-// Close overlay if clicked outside
 document.addEventListener('click', (e) => {
   const clickedInsideSettings = settingsDropdown.contains(e.target) || settingsIcon.contains(e.target);
   if (!clickedInsideSettings) {
@@ -198,24 +188,39 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Auto-show header on user activity (disabled if overlay is open)
+// AUTO HIDE HEADER + FOOTER LOGIC ------------------------------------------
 let userActiveTimeout;
+
 function setUserActive() {
-  if (isOverlayOpen()) return; // prevent hiding when overlay is active
-  document.body.classList.add("user-active");
+  const isFullscreen = !!document.fullscreenElement;
+  const overlayOpen = isOverlayOpen();
+
+  document.body.classList.add("user-active"); // show header (footer controlled separately)
+
   clearTimeout(userActiveTimeout);
   userActiveTimeout = setTimeout(() => {
-    document.body.classList.remove("user-active");
+    // Always keep header visible if overlay is open
+    if (!overlayOpen) {
+      document.body.classList.remove("user-active"); // hides header
+
+      // hide footer only in non-fullscreen mode (in fullscreen it's already hidden)
+      if (!isFullscreen) {
+        document.body.classList.remove("hide-footer");
+      }
+    }
   }, 5000);
 }
 
-// Detect user activity
 ["mousemove", "touchstart"].forEach(event =>
   document.addEventListener(event, setUserActive)
 );
 
-// Show header initially
-setUserActive();
+// INITIAL SETUP -------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  setUserActive();
+  updateFullscreenUI();
+});
+
 
 // DATE -----------------------------------------------------------------------------------------
 function updateDate() {
@@ -268,148 +273,188 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// Show Dialog Box for PWA Install ---------------------
-document.addEventListener("DOMContentLoaded", () => {
+// Detect if running as a PWA
+function detectPWA() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true ||
+         document.referrer?.startsWith('android-app://');
+}
+
+// Show install guide
+function showInstallDialog() {
   const dialog = document.getElementById("pwa-guide-dialog");
   const dialogBody = document.getElementById("pwa-guide-instructions");
-  const closeBtn = document.querySelector(".close-dialog");
+  const closeBtn = dialog?.querySelector(".close-dialog");
+
+  if (!dialog || !dialogBody) return;
 
   const ua = navigator.userAgent.toLowerCase();
-  const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  let content = "";
 
-  if (!isPWA && dialog && dialogBody) {
-    let content = "";
+  if (ua.includes("android")) {
+    content = `
+      <p>To install this Flip Clock as an app:</p>
+      <ol>
+        <li>Tap the <strong>three dots ⋮</strong> at the top-right of your browser.</li>
+        <li>Select <strong>"Add to Home screen"</strong>.</li>
+        <li>Open it anytime as a fullscreen clock.</li>
+      </ol>
+    `;
+  } else if (ua.includes("iphone") || ua.includes("ipad")) {
+    content = `
+      <p>To add this clock to your Home Screen:</p>
+      <ol>
+        <li>Tap the <strong>Share</strong> button (⤴️) at the bottom of Safari.</li>
+        <li>Select <strong>"Add to Home Screen"</strong>.</li>
+        <li>Open it from your Home Screen like a native app.</li>
+      </ol>
+    `;
+  } else if (ua.includes("mac") || ua.includes("windows")) {
+    content = `
+      <p>To install this Flip Clock as a desktop PWA:</p>
+      <ol>
+        <li>Open this site in <strong>Chrome</strong> or <strong>Edge</strong>.</li>
+        <li>Click the <strong>install icon</strong> (usually in the address bar).</li>
+        <li>Or go to the menu (⋮ or ...) and select <strong>"Install App"</strong>.</li>
+      </ol>
+    `;
+  } else {
+    content = `
+      <p>This Flip Clock can be installed as a PWA on most modern browsers:</p>
+      <ol>
+        <li>Look for the <strong>Install App</strong> icon in the browser's address bar or menu (⋮ or ...).</li>
+        <li>Add it to your home screen or desktop for fullscreen use.</li>
+      </ol>
+    `;
+  }
 
-    if (ua.includes("android")) {
-      content = `
-        <p>To install this Flip Clock as an app:</p>
-        <ol>
-          <li>Tap the <strong>three dots ⋮</strong> at the top-right of your browser.</li>
-          <li>Select <strong>"Add to Home screen"</strong>.</li>
-          <li>Open it anytime as a fullscreen clock.</li>
-        </ol>
-      `;
-    } else if (ua.includes("iphone") || ua.includes("ipad")) {
-      content = `
-        <p>To add this clock to your Home Screen:</p>
-        <ol>
-          <li>Tap the <strong>Share</strong> button (⤴️) at the bottom of Safari.</li>
-          <li>Select <strong>"Add to Home Screen"</strong>.</li>
-          <li>Open it from your Home Screen like a native app.</li>
-        </ol>
-        <hr />
-        <p>To prevent your screen from turning off:</p>
-        <ol>
-          <li>Go to <strong>Settings → Display & Brightness → Auto-Lock</strong>.</li>
-          <li>Set it to <strong>Never</strong>.</li>
-        </ol>
-      `;
-    } else if (ua.includes("mac") || ua.includes("windows")) {
-      content = `
-        <p>To install this Flip Clock as a desktop PWA:</p>
-        <ol>
-          <li>Open this site in <strong>Chrome</strong> or <strong>Edge</strong>.</li>
-          <li>Click the <strong>install icon</strong> (usually in the address bar).</li>
-          <li>Or go to the menu (⋮ or ...) and select <strong>"Install App"</strong>.</li>
-          <li>It will open in a dedicated fullscreen window like a widget.</li>
-        </ol>
-      `;
+  dialogBody.innerHTML = content;
+  dialog.classList.remove("hidden");
+  closeBtn?.addEventListener("click", () => dialog.classList.add("hidden"));
+}
+
+// Show screen timeout instructions
+function showScreenLockDialog() {
+  const lockDialog = document.getElementById("screen-lock-dialog");
+  const lockBody = document.getElementById("screen-lock-instructions");
+  const closeBtns = lockDialog?.querySelectorAll(".close-dialog");
+
+  if (!lockDialog || !lockBody) return;
+
+  const ua = navigator.userAgent.toLowerCase();
+  let lockContent = "";
+
+  if (ua.includes("iphone") || ua.includes("ipad")) {
+    lockContent = `
+      <ol>
+        <li>Go to <strong>Settings → Display & Brightness → Auto-Lock</strong>.</li>
+        <li>Set it to <strong>Never</strong>.</li>
+      </ol>
+    `;
+  } else if (ua.includes("android")) {
+    lockContent = `
+      <ol>
+        <li>Go to <strong>Settings → Display</strong> or <strong>Display & Brightness</strong>.</li>
+        <li>Find <strong>Sleep</strong> or <strong>Screen Timeout</strong> and set it to <strong>30 minutes</strong> or <strong>Never</strong>.</li>
+      </ol>
+    `;
+  } else if (ua.includes("mac") || ua.includes("windows")) {
+    lockContent = `
+      <ol>
+        <li>Go to <strong>Settings → Power & Sleep</strong>.</li>
+        <li>Under <strong>Screen</strong>, set "Turn off after" to <strong>Never</strong>.</li>
+      </ol>
+    `;
+  }
+
+  lockBody.innerHTML = lockContent;
+  lockDialog.classList.remove("hidden");
+
+  closeBtns.forEach(btn =>
+    btn.addEventListener("click", () => lockDialog.classList.add("hidden"))
+  );
+}
+
+// Wake Lock API
+let wakeLock = null;
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('✅ Wake Lock activated');
+
+      document.addEventListener('visibilitychange', async () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') {
+          try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('🔄 Wake Lock re-acquired');
+          } catch (err) {
+            console.error('⚠️ Failed to re-acquire Wake Lock:', err);
+          }
+        }
+      });
     } else {
-      content = `
-        <p>This Flip Clock can be installed as a PWA on most modern browsers:</p>
-        <ol>
-          <li>Look for the <strong>Install App</strong> icon in the browser's address bar or menu (⋮ or ...).</li>
-          <li>Add it to your home screen or desktop for fullscreen use.</li>
-        </ol>
-      `;
+      console.warn('❌ Wake Lock API not supported on this device.');
     }
-
-    dialogBody.innerHTML = content;
-    dialog.classList.remove("hidden");
-
-    closeBtn?.addEventListener("click", () => {
-      dialog.classList.add("hidden");
-    });
+  } catch (err) {
+    console.error('❌ Wake Lock request failed:', err);
   }
+}
 
-  // Keep Screen Awake in PWA mode -------------------------------
-  let wakeLock = null;
+// Service Worker + Update Banner
+function setupServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
 
-  async function requestWakeLock() {
-    try {
-      if ('wakeLock' in navigator) {
-        wakeLock = await navigator.wakeLock.request('screen');
-        console.log('✅ Wake Lock activated');
+  let newWorker;
+  const banner = document.getElementById('update-banner');
+  const updatedBanner = document.getElementById('updated-banner');
+  const refreshBtn = document.getElementById('refresh-btn');
 
-        document.addEventListener('visibilitychange', async () => {
-          if (wakeLock !== null && document.visibilityState === 'visible') {
-            try {
-              wakeLock = await navigator.wakeLock.request('screen');
-              console.log('🔄 Wake Lock re-acquired');
-            } catch (err) {
-              console.error('⚠️ Failed to re-acquire Wake Lock:', err);
-            }
-          }
-        });
-      } else {
-        console.warn('❌ Wake Lock API not supported on this device.');
-      }
-    } catch (err) {
-      console.error('❌ Wake Lock request failed:', err);
-    }
-  }
-
-  if (isPWA) {
-    requestWakeLock();
-  }
-
-  // Service Worker + Auto Update Check -----------------------------------------
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(registration => {
-      console.log('✅ Service Worker registered');
-
-      // Check for updates when app/tab becomes visible
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          registration.update();
+  navigator.serviceWorker.register('./service-worker.js').then(reg => {
+    reg.addEventListener('updatefound', () => {
+      newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          banner?.classList.remove('hidden');
         }
       });
-
-      registration.onupdatefound = () => {
-        const newWorker = registration.installing;
-        newWorker.onstatechange = () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            const banner = document.getElementById('update-banner');
-            const refreshBtn = document.getElementById('refresh-btn');
-
-            if (banner && refreshBtn) {
-              banner.classList.remove('hidden');
-
-              refreshBtn.addEventListener('click', () => {
-                newWorker.postMessage({ action: 'skipWaiting' });
-                window.location.reload();
-              });
-
-              // Auto-hide after 10s if not clicked
-              setTimeout(() => {
-                banner.classList.add('hidden');
-              }, 10000);
-            }
-          }
-        };
-      };
-
-      // Reload when SW takes control
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          window.location.reload();
-          refreshing = true;
-        }
-      });
-
-    }).catch(err => {
-      console.error('❌ Service Worker registration failed:', err);
     });
-  }
+  });
+
+  refreshBtn?.addEventListener('click', () => {
+    newWorker?.postMessage({ action: 'skipWaiting' });
+    sessionStorage.setItem('versionUpdated', 'true');
+    window.location.reload();
+  });
+
+  window.addEventListener('load', () => {
+    if (sessionStorage.getItem('versionUpdated')) {
+      sessionStorage.removeItem('versionUpdated');
+      updatedBanner?.classList.remove('hidden');
+      setTimeout(() => {
+        updatedBanner?.classList.add('hidden');
+      }, 3000);
+    }
+  });
+
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
+// Entry point
+window.addEventListener("load", () => {
+  setupServiceWorker();
+
+  // Slight delay to let `display-mode` stabilize
+  setTimeout(() => {
+    const isPWA = detectPWA();
+
+    if (isPWA) {
+      showScreenLockDialog();
+      requestWakeLock();
+    } else {
+      showInstallDialog();
+    }
+  }, 200);
 });
